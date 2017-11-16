@@ -1,10 +1,16 @@
-const server = require('express')
-const io = require('socket.io')(server)
+const server = require('express')()
+let io = require('socket.io')
 
-io.on('connection', (socket) => {
-  console.log(socket.id)
+let app = server.listen(process.env.PORT || 3080, () => {
+  console.log('servidor rodando na porta 3080')
 })
 
-server.listen(process.env.PORT || 3080, () => {
-  console.log('servidor rodando na')
+let socket = io(app)
+
+socket.on('connection', socketServer => {
+  console.log(socketServer.id)
+  socketServer.on('SEND_MESSAGE', data => {
+    console.log(data)
+    socket.emit('RECEIVE_MESSAGE', data)
+  })
 })
